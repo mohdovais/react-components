@@ -8,7 +8,7 @@ type Country = {
 };
 
 function App() {
-  const [val, setVal] = useState<Country>(countries[0]);
+  const [val, setVal] = useState<Country>(countries[100]);
 
   const options = useMemo(
     () =>

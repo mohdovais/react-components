@@ -24,3 +24,7 @@
 .option.disabled {
   color: #ccc;
 }
+
+.option.active {
+  background-color: cadetblue;
+}

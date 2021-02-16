@@ -1,10 +1,11 @@
 import * as React from "react";
-import { usePickerPosition } from "./usePosition";
-import Option, { OptionProps, Value } from "./Option";
-import style from "./Combobox.module.css";
-import { useRandomId } from "./useRandomId";
+import Option, { OptionProps } from "./Option";
 import Optgroup, { OptgroupProps } from "./Optgroup";
 import Picker from "./Picker";
+import { usePickerPosition } from "./usePosition";
+import { useRandomId } from "./useRandomId";
+import { ValueType, emptyFn } from "./common";
+import style from "./Combobox.module.css";
 
 export interface ComboboxProps<T> {
   children?:
@@ -19,13 +20,7 @@ export interface ComboboxProps<T> {
   display?: (value?: T) => React.ReactNode;
 }
 
-const emptyFn = () => {};
-const defaultDisplayRenderer = (value: Value) => JSON.stringify(value);
-
-type KeyValue<T> = {
-  key: string;
-  value: T;
-};
+const defaultDisplayRenderer = (value: ValueType) => JSON.stringify(value);
 
 function normalizeChildren<T>(
   children: React.ReactNode,
@@ -38,7 +33,9 @@ function normalizeChildren<T>(
     if (React.isValidElement(child)) {
       const props = child.props;
       if (child.type === Option) {
-        const key = (Math.random() + Math.random()).toString(36);
+        const key = (Math.random() + Math.random())
+          .toString(36)
+          .replace(/^\d\./, "option-");
         keys.push(key);
         values.push(props.value);
         dzieci.push(
@@ -61,12 +58,7 @@ function normalizeChildren<T>(
   return { dzieci, keys, values };
 }
 
-export const ComboboxContext = React.createContext({
-  value: undefined,
-  onSelect: emptyFn,
-});
-
-function Combobox<T extends Value>(props: ComboboxProps<T>) {
+function Combobox<T extends ValueType>(props: ComboboxProps<T>) {
   const {
     children,
     disabled = false,
@@ -74,33 +66,94 @@ function Combobox<T extends Value>(props: ComboboxProps<T>) {
     onChange = emptyFn,
     display = defaultDisplayRenderer,
   } = props;
-  const ref = React.useRef(null);
+  const ref = React.useRef<HTMLDivElement>(null);
+  const listboxId = useRandomId("listbox");
   const [expanded, setExpanded] = React.useState(false);
+  const [activeDescendant, setActiveDescendant] = React.useState(listboxId);
+  const pickerStyle = usePickerPosition(ref, expanded);
   const { keys, values, dzieci } = React.useMemo(
     () => normalizeChildren<T>(children),
     [children]
   );
-
-  const listboxId = useRandomId("listbox");
-  const pickerStyle = usePickerPosition(ref, expanded);
   const count = keys.length;
 
-  const onSelect = React.useCallback((value) => {
+  const collapse = React.useCallback((focusBack = true) => {
+    setActiveDescendant(listboxId);
     setExpanded(false);
+    if (focusBack) {
+      ref.current?.focus();
+    }
+  }, []);
+
+  const onSelect = React.useCallback((value) => {
+    collapse();
     onChange(value);
   }, []);
 
   const handleKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
+    if (count === 0) return;
     switch (event.code) {
-      case "ArrowDown":
-      case "ArrowUp":
-      case "Space":
+      case "ArrowDown": {
+        let descenedent = activeDescendant;
+        if (descenedent === listboxId) {
+          if (value !== undefined) {
+            descenedent = keys[values.indexOf(value)];
+          }
+          if (descenedent === undefined) {
+            descenedent = keys[0];
+          }
+        } else {
+          let index = keys.indexOf(descenedent) + 1;
+          if (index < count) {
+            descenedent = keys[index];
+          }
+        }
+        setActiveDescendant(descenedent);
         setExpanded(true);
         break;
+      }
+
+      case "ArrowUp": {
+        let descenedent = activeDescendant;
+        if (descenedent === listboxId) {
+          if (value !== undefined) {
+            descenedent = keys[values.indexOf(value)];
+          }
+          if (descenedent === undefined) {
+            descenedent = keys[0];
+          }
+        } else {
+          let index = keys.indexOf(descenedent) - 1;
+          if (index > -1) {
+            descenedent = keys[index];
+          }
+        }
+        setActiveDescendant(descenedent);
+        setExpanded(true);
+        break;
+      }
+
+      case "Space": {
+        if (!expanded) {
+          let descenedent;
+          if (value !== undefined) {
+            descenedent = keys[values.indexOf(value)];
+          }
+          if (descenedent === undefined) {
+            descenedent = keys[0];
+          }
+          setActiveDescendant(
+            descenedent === undefined ? listboxId : descenedent
+          );
+          setExpanded(true);
+        }
+        break;
+      }
+
       case "ArrowRight":
         if (!expanded) {
           const index = value === undefined ? 0 : values.indexOf(value) + 1;
-          if (count > 0 && index < count) {
+          if (index < count) {
             onChange(values[index]);
           }
         }
@@ -108,21 +161,29 @@ function Combobox<T extends Value>(props: ComboboxProps<T>) {
       case "ArrowLeft":
         if (!expanded) {
           const index = value === undefined ? 0 : values.indexOf(value) - 1;
-          if (count > 0 && index > -1) {
+          if (index > -1) {
             onChange(values[index]);
           }
         }
         break;
       case "Enter":
+        if (expanded && activeDescendant !== listboxId) {
+          onChange(values[keys.indexOf(activeDescendant)]);
+        }
+        collapse();
         break;
       case "Escape":
-        setExpanded(false);
+        collapse();
         break;
     }
   };
 
   return (
-    <div className={style.comboboxWrapper}>
+    <div
+      className={style.comboboxWrapper}
+      onKeyDown={handleKeyDown}
+      onBlur={() => setTimeout(collapse, 100, false)}
+    >
       <div
         role="combobox"
         aria-expanded={expanded}
@@ -131,15 +192,18 @@ function Combobox<T extends Value>(props: ComboboxProps<T>) {
         ref={ref}
         className={style.combobox + " " + (disabled ? style.disabled : "")}
         tabIndex={disabled ? undefined : 0}
-        onClick={disabled ? undefined : () => setExpanded(!expanded)}
-        onKeyDown={handleKeyDown}
+        onClick={
+          disabled
+            ? undefined
+            : () => (expanded ? collapse() : setExpanded(true))
+        }
       >
         <div
           role="textbox"
           aria-autocomplete="list"
           aria-readonly="true"
           aria-multiline="false"
-          aria-activedescendant=""
+          aria-activedescendant={activeDescendant}
         >
           {display(value)}
         </div>
@@ -150,6 +214,7 @@ function Combobox<T extends Value>(props: ComboboxProps<T>) {
         value={value}
         onSelect={onSelect}
         expand={expanded}
+        activeId={activeDescendant}
       >
         {dzieci}
       </Picker>

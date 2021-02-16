@@ -1,6 +1,6 @@
 import * as React from "react";
 import css from "./Picker.module.css";
-import { ComboboxContext } from "./Combobox";
+import { ComboboxContext } from "./common";
 
 interface PickerProps {
   id?: string;
@@ -10,6 +10,7 @@ interface PickerProps {
   onSelect: (value: any) => void;
   children: React.ReactNode;
   searchable?: boolean;
+  activeId?: string;
 }
 
 function Picker(props: PickerProps) {
@@ -20,7 +21,8 @@ function Picker(props: PickerProps) {
     expand = true,
     value,
     onSelect,
-    searchable = true,
+    searchable = false,
+    activeId,
   } = props;
   const inputRef = React.useRef<HTMLInputElement>(null);
 
@@ -33,7 +35,7 @@ function Picker(props: PickerProps) {
   return (
     <div role="listbox" id={id} className={css.listbox} style={style}>
       {expand ? (
-        <ComboboxContext.Provider value={{ value, onSelect }}>
+        <ComboboxContext.Provider value={{ value, onSelect, activeId }}>
           {searchable ? (
             <div className={css.search}>
               <input
