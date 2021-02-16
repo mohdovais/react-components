@@ -23,7 +23,7 @@ function App() {
   console.log(val);
   return (
     <div style={{ padding: 50 }}>
-      <select>
+      <select value="IN">
         {countries.map((country: Country) => (
           <option key={country.code} value={country.code}>
             {country.name}

@@ -1,5 +1,6 @@
 import * as React from "react";
-import style from "./Combobox.module.css";
+import { ComboboxContext } from "./Combobox";
+import css from "./Option.module.css";
 
 export type Value =
   | string
@@ -16,18 +17,11 @@ export interface OptionProps {
   value?: Value;
 }
 
-interface PrivateOptionProps extends OptionProps {
-  selected: boolean;
-  onSelect: (value: Value) => void;
-}
-
 function Option(props: OptionProps) {
-  return null;
-}
-
-export function PrivateOption(props: PrivateOptionProps) {
-  const { children, disabled, selected, value, onSelect } = props;
+  const { children, disabled, value } = props;
   const ref = React.useRef<HTMLDivElement>(null);
+  const { onSelect, value: selection } = React.useContext(ComboboxContext);
+  const selected = selection === value;
 
   React.useEffect(() => {
     var timeout: number;
@@ -43,9 +37,9 @@ export function PrivateOption(props: PrivateOptionProps) {
       aria-selected={selected}
       aria-disabled={disabled}
       className={[
-        style.option,
-        selected ? style.selected + " selected" : "",
-        disabled ? style.disabled + " disabled" : "",
+        css.option,
+        selected ? css.selected + " selected" : "",
+        disabled ? css.disabled + " disabled" : "",
       ].join(" ")}
       onClick={disabled ? undefined : () => onSelect(value)}
       ref={ref}

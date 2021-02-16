@@ -1,0 +1,26 @@
+.option {
+  padding: 0.5em 1em 0.5em 1.5em;
+  position: relative;
+}
+
+.option + .option {
+  border-top: 1px solid rgba(0, 0, 0, 0.15);
+}
+
+.option:not(.disabled) {
+  cursor: pointer;
+}
+
+.option:not(.disabled):hover {
+  background-color: aliceblue;
+}
+
+.option.selected::before {
+  content: "\2713";
+  position: absolute;
+  left: 0.5em;
+}
+
+.option.disabled {
+  color: #ccc;
+}
