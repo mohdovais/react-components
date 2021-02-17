@@ -1,23 +1,23 @@
 import * as React from "react";
-import { ComboboxContext, ValueType } from "./common";
-import css from "./Option.module.css";
-
-export interface OptionProps {
-  disabled?: boolean;
-  children: React.ReactNode;
-  value?: ValueType;
-}
+import { memo, useEffect, useRef, useContext } from "./react";
+import { ComboboxContext } from "./context";
+import { OptionProps } from "./types";
+import {
+  option as $option,
+  selected as $selected,
+  disabled as $disabled,
+  active as $active,
+} from "./Combobox.module.css";
 
 function Option(props: OptionProps) {
+  // @ts-ignore
   const { children, disabled, value, $__ID } = props;
-  const ref = React.useRef<HTMLDivElement>(null);
-  const { onSelect, value: selection, activeId } = React.useContext(
-    ComboboxContext
-  );
+  const ref = useRef<HTMLDivElement>(null);
+  const { onSelect, value: selection, activeId } = useContext(ComboboxContext);
   const selected = selection === value;
   const active = activeId === $__ID;
 
-  React.useEffect(() => {
+  useEffect(() => {
     var timeout: number;
     if (selected || active) {
       timeout = setTimeout(() => ref.current?.scrollIntoView(), 10);
@@ -32,10 +32,10 @@ function Option(props: OptionProps) {
       aria-disabled={disabled}
       id={$__ID}
       className={[
-        css.option,
-        selected ? css.selected + " selected" : "",
-        disabled ? css.disabled + " disabled" : "",
-        active ? css.active : "",
+        $option,
+        selected ? $selected + " selected" : "",
+        disabled ? $disabled + " disabled" : "",
+        active ? $active : "",
       ].join(" ")}
       onClick={disabled ? undefined : () => onSelect(value)}
       ref={ref}
@@ -45,4 +45,4 @@ function Option(props: OptionProps) {
   );
 }
 
-export default React.memo(Option);
+export default memo(Option);

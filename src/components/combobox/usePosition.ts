@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useEffect, useState } from "./react";
 
 const displayNone: React.CSSProperties = { display: "none" };
 const win = window;

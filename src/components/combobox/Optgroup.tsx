@@ -1,12 +1,7 @@
 import * as React from "react";
-import { OptionProps } from "./Option";
+import { memo } from "./react";
 import { useRandomId } from "./useRandomId";
-
-export interface OptgroupProps {
-  disabled?: boolean;
-  label: string;
-  children: React.ReactElement<OptionProps> | React.ReactElement<OptionProps>[];
-}
+import { OptgroupProps } from "./types";
 
 function Optgroup(props: OptgroupProps) {
   const { children, label, disabled } = props;
@@ -21,4 +16,4 @@ function Optgroup(props: OptgroupProps) {
   );
 }
 
-export default React.memo(Optgroup);
+export default memo(Optgroup);

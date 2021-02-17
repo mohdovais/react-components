@@ -1,24 +1,24 @@
 import * as React from "react";
-import Option, { OptionProps } from "./Option";
-import Optgroup, { OptgroupProps } from "./Optgroup";
+import {
+  cloneElement,
+  memo,
+  useCallback,
+  useMemo,
+  useRef,
+  useState,
+} from "./react";
+import Option from "./Option";
+import Optgroup from "./Optgroup";
 import Picker from "./Picker";
 import { usePickerPosition } from "./usePosition";
 import { useRandomId } from "./useRandomId";
-import { ValueType, emptyFn } from "./common";
-import style from "./Combobox.module.css";
-
-export interface ComboboxProps<T> {
-  children?:
-    | React.ReactElement<OptionProps>
-    | React.ReactElement<OptionProps>[]
-    | React.ReactElement<OptgroupProps>
-    | React.ReactElement<OptgroupProps>[];
-  disabled?: boolean;
-  multiple?: boolean;
-  value?: T;
-  onChange: (value: T) => void;
-  display?: (value?: T) => React.ReactNode;
-}
+import { emptyFn } from "./context";
+import {
+  wrapper as $wrapper,
+  combobox as $combobox,
+  disabled as $disabled,
+} from "./Combobox.module.css";
+import { ComboboxProps, OptionProps, ValueType } from "./types";
 
 const defaultDisplayRenderer = (value: ValueType) => JSON.stringify(value);
 
@@ -39,14 +39,14 @@ function normalizeChildren<T>(
         keys.push(key);
         values.push(props.value);
         dzieci.push(
-          React.cloneElement(child, {
+          cloneElement(child, {
             disabled: props.disabled || disabled,
             $__ID: key,
           })
         );
       } else if (child.type === Optgroup) {
         dzieci.push(
-          React.cloneElement(
+          cloneElement(
             child,
             {},
             normalizeChildren(props.children, props.disabled)
@@ -66,18 +66,18 @@ function Combobox<T extends ValueType>(props: ComboboxProps<T>) {
     onChange = emptyFn,
     display = defaultDisplayRenderer,
   } = props;
-  const ref = React.useRef<HTMLDivElement>(null);
+  const ref = useRef<HTMLDivElement>(null);
   const listboxId = useRandomId("listbox");
-  const [expanded, setExpanded] = React.useState(false);
-  const [activeDescendant, setActiveDescendant] = React.useState(listboxId);
+  const [expanded, setExpanded] = useState(false);
+  const [activeDescendant, setActiveDescendant] = useState(listboxId);
   const pickerStyle = usePickerPosition(ref, expanded);
-  const { keys, values, dzieci } = React.useMemo(
+  const { keys, values, dzieci } = useMemo(
     () => normalizeChildren<T>(children),
     [children]
   );
   const count = keys.length;
 
-  const collapse = React.useCallback((focusBack = true) => {
+  const collapse = useCallback((focusBack = true) => {
     setActiveDescendant(listboxId);
     setExpanded(false);
     if (focusBack) {
@@ -85,7 +85,7 @@ function Combobox<T extends ValueType>(props: ComboboxProps<T>) {
     }
   }, []);
 
-  const onSelect = React.useCallback((value) => {
+  const onSelect = useCallback((value) => {
     collapse();
     onChange(value);
   }, []);
@@ -166,12 +166,15 @@ function Combobox<T extends ValueType>(props: ComboboxProps<T>) {
           }
         }
         break;
-      case "Enter":
-        if (expanded && activeDescendant !== listboxId) {
-          onChange(values[keys.indexOf(activeDescendant)]);
-        }
+      case "Enter": {
+        let descendent = activeDescendant;
         collapse();
+        if (expanded && descendent !== listboxId) {
+          onChange(values[keys.indexOf(descendent)]);
+        }
         break;
+      }
+
       case "Escape":
         collapse();
         break;
@@ -180,7 +183,7 @@ function Combobox<T extends ValueType>(props: ComboboxProps<T>) {
 
   return (
     <div
-      className={style.comboboxWrapper}
+      className={$wrapper}
       onKeyDown={handleKeyDown}
       onBlur={() => setTimeout(collapse, 100, false)}
     >
@@ -190,7 +193,7 @@ function Combobox<T extends ValueType>(props: ComboboxProps<T>) {
         aria-owns={listboxId}
         aria-haspopup="listbox"
         ref={ref}
-        className={style.combobox + " " + (disabled ? style.disabled : "")}
+        className={$combobox + " " + (disabled ? $disabled : "")}
         tabIndex={disabled ? undefined : 0}
         onClick={
           disabled
@@ -222,4 +225,4 @@ function Combobox<T extends ValueType>(props: ComboboxProps<T>) {
   );
 }
 
-export default React.memo(Combobox) as typeof Combobox;
+export default memo(Combobox) as typeof Combobox;

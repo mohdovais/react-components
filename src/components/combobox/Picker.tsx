@@ -1,17 +1,12 @@
 import * as React from "react";
-import css from "./Picker.module.css";
-import { ComboboxContext } from "./common";
-
-interface PickerProps {
-  id?: string;
-  style?: React.CSSProperties;
-  expand?: boolean;
-  value: any;
-  onSelect: (value: any) => void;
-  children: React.ReactNode;
-  searchable?: boolean;
-  activeId?: string;
-}
+import { memo, useRef, useEffect } from "./react";
+import {
+  listbox as $listbox,
+  search as $search,
+  scroller as $scroller,
+} from "./Combobox.module.css";
+import { ComboboxContext } from "./context";
+import { PickerProps } from "./types";
 
 function Picker(props: PickerProps) {
   const {
@@ -24,20 +19,20 @@ function Picker(props: PickerProps) {
     searchable = false,
     activeId,
   } = props;
-  const inputRef = React.useRef<HTMLInputElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (expand && inputRef.current) {
       setTimeout(() => inputRef.current?.focus(), 100);
     }
   }, [expand]);
 
   return (
-    <div role="listbox" id={id} className={css.listbox} style={style}>
+    <div role="listbox" id={id} className={$listbox} style={style}>
       {expand ? (
         <ComboboxContext.Provider value={{ value, onSelect, activeId }}>
           {searchable ? (
-            <div className={css.search}>
+            <div className={$search}>
               <input
                 type="search"
                 spellCheck="false"
@@ -48,11 +43,11 @@ function Picker(props: PickerProps) {
             </div>
           ) : null}
 
-          <div className={css.scroller}>{children}</div>
+          <div className={$scroller}>{children}</div>
         </ComboboxContext.Provider>
       ) : null}
     </div>
   );
 }
 
-export default React.memo(Picker);
+export default memo(Picker);
