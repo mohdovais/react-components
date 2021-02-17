@@ -10,6 +10,7 @@ type Country = {
 function App() {
   const [countries, setCountries] = useState<Country[]>([]);
   const [val, setVal] = useState<Country>(countries[100]);
+  const [query, setQuery] = useState("");
 
   useEffect(() => {
     fetch("/data/countries.json")
@@ -17,15 +18,16 @@ function App() {
       .then(setCountries);
   }, []);
 
-  const options = useMemo(
-    () =>
-      countries.map((country: Country) => (
+  const options = useMemo(() => {
+    const regexr = new RegExp(query, "i");
+    return countries
+      .filter((country: Country) => regexr.test(country.name))
+      .map((country: Country) => (
         <Option key={country.code} value={country}>
           {country.name}
         </Option>
-      )),
-    [countries]
-  );
+      ));
+  }, [countries, query]);
 
   return (
     <div style={{ padding: 50 }}>
@@ -43,6 +45,7 @@ function App() {
         value={val}
         onChange={setVal}
         display={(country?: Country) => country?.name ?? "select"}
+        onSearch={setQuery}
       >
         {options}
       </Combobox>

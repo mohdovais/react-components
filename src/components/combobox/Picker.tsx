@@ -5,7 +5,7 @@ import {
   search as $search,
   scroller as $scroller,
 } from "./Combobox.module.css";
-import { ComboboxContext } from "./context";
+import { ComboboxContext, emptyFn } from "./context";
 import { PickerProps } from "./types";
 
 function Picker(props: PickerProps) {
@@ -16,8 +16,8 @@ function Picker(props: PickerProps) {
     expand = true,
     value,
     onSelect,
-    searchable = false,
     activeId,
+    onSearch,
   } = props;
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -31,7 +31,7 @@ function Picker(props: PickerProps) {
     <div role="listbox" id={id} className={$listbox} style={style}>
       {expand ? (
         <ComboboxContext.Provider value={{ value, onSelect, activeId }}>
-          {searchable ? (
+          {onSearch !== emptyFn ? (
             <div className={$search}>
               <input
                 type="search"
@@ -39,6 +39,11 @@ function Picker(props: PickerProps) {
                 autoComplete="false"
                 autoCapitalize="false"
                 ref={inputRef}
+                onChange={
+                  typeof onSearch === "function"
+                    ? (event) => onSearch(event.target.value)
+                    : undefined
+                }
               />
             </div>
           ) : null}

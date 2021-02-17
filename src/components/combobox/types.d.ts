@@ -24,10 +24,10 @@ export interface PickerProps {
   style?: React.CSSProperties;
   expand?: boolean;
   value: any;
-  onSelect: (value: any) => void;
   children: React.ReactNode;
-  searchable?: boolean;
   activeId?: string;
+  onSelect: (value: any) => void;
+  onSearch?: (searchText: string) => void;
 }
 
 export interface ComboboxProps<T> {
@@ -41,6 +41,7 @@ export interface ComboboxProps<T> {
   value?: T;
   onChange: (value: T) => void;
   display?: (value?: T) => React.ReactNode;
+  onSearch?: (searchText: string) => void;
 }
 
 export type ContextType = {

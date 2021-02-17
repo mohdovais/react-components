@@ -65,6 +65,7 @@ function Combobox<T extends ValueType>(props: ComboboxProps<T>) {
     value,
     onChange = emptyFn,
     display = defaultDisplayRenderer,
+    onSearch = emptyFn,
   } = props;
   const ref = useRef<HTMLDivElement>(null);
   const listboxId = useRandomId("listbox");
@@ -78,11 +79,12 @@ function Combobox<T extends ValueType>(props: ComboboxProps<T>) {
   const count = keys.length;
 
   const collapse = useCallback((focusBack = true) => {
-    setActiveDescendant(listboxId);
-    setExpanded(false);
     if (focusBack) {
       ref.current?.focus();
     }
+    setActiveDescendant(listboxId);
+    setExpanded(false);
+    onSearch("");
   }, []);
 
   const onSelect = useCallback((value) => {
@@ -185,7 +187,14 @@ function Combobox<T extends ValueType>(props: ComboboxProps<T>) {
     <div
       className={$wrapper}
       onKeyDown={handleKeyDown}
-      onBlur={() => setTimeout(collapse, 100, false)}
+      onBlur={({ currentTarget, relatedTarget }) => {
+        if (
+          relatedTarget === null ||
+          !currentTarget.contains(relatedTarget as Node)
+        ) {
+          collapse(false);
+        }
+      }}
     >
       <div
         role="combobox"
@@ -218,6 +227,7 @@ function Combobox<T extends ValueType>(props: ComboboxProps<T>) {
         onSelect={onSelect}
         expand={expanded}
         activeId={activeDescendant}
+        onSearch={onSearch}
       >
         {dzieci}
       </Picker>

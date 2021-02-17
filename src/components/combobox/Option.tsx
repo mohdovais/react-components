@@ -38,6 +38,7 @@ function Option(props: OptionProps) {
         active ? $active : "",
       ].join(" ")}
       onClick={disabled ? undefined : () => onSelect(value)}
+      tabIndex={-1}
       ref={ref}
     >
       {children}
