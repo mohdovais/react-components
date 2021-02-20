@@ -37,7 +37,7 @@ interface ComboboxSingleProps<T> {
     | React.ReactElement<OptgroupProps>
     | React.ReactElement<OptgroupProps>[];
   disabled?: boolean;
-  multiple: false | undefined;
+  multiple?: false;
   value?: T;
   onChange: (value: T) => void;
   display?: (value?: T) => React.ReactNode;
