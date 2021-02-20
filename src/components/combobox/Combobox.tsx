@@ -1,62 +1,25 @@
 import * as React from "react";
-import {
-  cloneElement,
-  memo,
-  useCallback,
-  useMemo,
-  useRef,
-  useState,
-} from "./react";
-import Option from "./Option";
-import Optgroup from "./Optgroup";
+import { memo, useCallback, useMemo, useRef } from "./react";
 import Picker from "./Picker";
 import { usePickerPosition } from "./usePosition";
-import { useRandomId } from "./useRandomId";
 import { emptyFn } from "./context";
+import { normalizeChildren, getActiveDescendant } from "./Combobox.utils";
 import {
   wrapper as $wrapper,
   combobox as $combobox,
   disabled as $disabled,
 } from "./Combobox.module.css";
-import { ComboboxProps, OptionProps, ValueType } from "./types";
+import { ComboboxProps, ValueType } from "./types";
+import {
+  initialState,
+  initState,
+  reducer,
+  ACTION_TYPE_COLLAPSE,
+  ACTION_TYPE_EXPAND,
+  ACTION_TYPE_DESCENDANT,
+} from "./store";
 
-const defaultDisplayRenderer = (value: ValueType) => JSON.stringify(value);
-
-function normalizeChildren<T>(
-  children: React.ReactNode,
-  disabled = false,
-  dzieci: React.ReactElement<OptionProps>[] = [],
-  keys: string[] = [],
-  values: T[] = []
-) {
-  React.Children.forEach(children, (child) => {
-    if (React.isValidElement(child)) {
-      const props = child.props;
-      if (child.type === Option) {
-        const key = (Math.random() + Math.random())
-          .toString(36)
-          .replace(/^\d\./, "option-");
-        keys.push(key);
-        values.push(props.value);
-        dzieci.push(
-          cloneElement(child, {
-            disabled: props.disabled || disabled,
-            $__ID: key,
-          })
-        );
-      } else if (child.type === Optgroup) {
-        dzieci.push(
-          cloneElement(
-            child,
-            {},
-            normalizeChildren(props.children, props.disabled)
-          )
-        );
-      }
-    }
-  });
-  return { dzieci, keys, values };
-}
+const defaultDisplayRenderer = (value: ValueType ) => JSON.stringify(value);
 
 function Combobox<T extends ValueType>(props: ComboboxProps<T>) {
   const {
@@ -66,113 +29,115 @@ function Combobox<T extends ValueType>(props: ComboboxProps<T>) {
     onChange = emptyFn,
     display = defaultDisplayRenderer,
     onSearch = emptyFn,
+    multiple = false,
   } = props;
   const ref = useRef<HTMLDivElement>(null);
-  const listboxId = useRandomId("listbox");
-  const [expanded, setExpanded] = useState(false);
-  const [activeDescendant, setActiveDescendant] = useState(listboxId);
+  const [state, dispatch] = React.useReducer(reducer, initialState, initState);
+  const { activeDescendant, expanded, listboxId } = state;
   const pickerStyle = usePickerPosition(ref, expanded);
-  const { keys, values, dzieci } = useMemo(
-    () => normalizeChildren<T>(children),
-    [children]
+  const { dzieci, optProps } = useMemo(() => normalizeChildren<T>(children), [
+    children,
+  ]);
+  const count = optProps.length;
+
+  const collapse = useCallback(
+    (focusBack = true) => {
+      if (focusBack) {
+        ref.current?.focus();
+      }
+      dispatch({ type: ACTION_TYPE_COLLAPSE });
+      onSearch("");
+    },
+    [onSearch]
   );
-  const count = keys.length;
 
-  const collapse = useCallback((focusBack = true) => {
-    if (focusBack) {
-      ref.current?.focus();
-    }
-    setActiveDescendant(listboxId);
-    setExpanded(false);
-    onSearch("");
-  }, []);
-
-  const onSelect = useCallback((value) => {
-    collapse();
-    onChange(value);
-  }, []);
+  const onSelect = useCallback(
+    (value) => {
+      collapse();
+      onChange(value);
+    },
+    [collapse, onChange]
+  );
 
   const handleKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
     if (count === 0) return;
+
     switch (event.code) {
-      case "ArrowDown": {
-        let descenedent = activeDescendant;
-        if (descenedent === listboxId) {
-          if (value !== undefined) {
-            descenedent = keys[values.indexOf(value)];
-          }
-          if (descenedent === undefined) {
-            descenedent = keys[0];
-          }
-        } else {
-          let index = keys.indexOf(descenedent) + 1;
-          if (index < count) {
-            descenedent = keys[index];
-          }
+      case "ArrowDown":
+        dispatch({
+          type: ACTION_TYPE_DESCENDANT,
+          descendant: getActiveDescendant(
+            activeDescendant,
+            listboxId,
+            optProps,
+            value,
+            expanded ? 1 : 0
+          ),
+        });
+        break;
+
+      case "ArrowUp":
+        dispatch({
+          type: ACTION_TYPE_DESCENDANT,
+          descendant: getActiveDescendant(
+            activeDescendant,
+            listboxId,
+            optProps,
+            value,
+            expanded ? -1 : 0
+          ),
+        });
+        break;
+
+      case "Space":
+        if (!expanded) {
+          dispatch({
+            type: ACTION_TYPE_DESCENDANT,
+            descendant: getActiveDescendant(
+              activeDescendant,
+              listboxId,
+              optProps,
+              value,
+              0
+            ),
+          });
         }
-        setActiveDescendant(descenedent);
-        setExpanded(true);
+        break;
+
+      case "ArrowRight": {
+        if (expanded || multiple) {
+          return;
+        }
+        const index =
+          value === undefined
+            ? 0
+            : optProps.findIndex((opt) => opt.value === value) + 1;
+        if (index < count) {
+          onChange(optProps[index].value);
+        }
         break;
       }
 
-      case "ArrowUp": {
-        let descenedent = activeDescendant;
-        if (descenedent === listboxId) {
-          if (value !== undefined) {
-            descenedent = keys[values.indexOf(value)];
-          }
-          if (descenedent === undefined) {
-            descenedent = keys[0];
-          }
-        } else {
-          let index = keys.indexOf(descenedent) - 1;
-          if (index > -1) {
-            descenedent = keys[index];
-          }
+      case "ArrowLeft": {
+        if (expanded || multiple) {
+          return;
         }
-        setActiveDescendant(descenedent);
-        setExpanded(true);
-        break;
-      }
-
-      case "Space": {
-        if (!expanded) {
-          let descenedent;
-          if (value !== undefined) {
-            descenedent = keys[values.indexOf(value)];
-          }
-          if (descenedent === undefined) {
-            descenedent = keys[0];
-          }
-          setActiveDescendant(
-            descenedent === undefined ? listboxId : descenedent
-          );
-          setExpanded(true);
+        const index =
+          value === undefined
+            ? 0
+            : optProps.findIndex((opt) => opt.value === value) - 1;
+        if (index > -1) {
+          onChange(optProps[index].value);
         }
         break;
       }
 
-      case "ArrowRight":
-        if (!expanded) {
-          const index = value === undefined ? 0 : values.indexOf(value) + 1;
-          if (index < count) {
-            onChange(values[index]);
-          }
-        }
-        break;
-      case "ArrowLeft":
-        if (!expanded) {
-          const index = value === undefined ? 0 : values.indexOf(value) - 1;
-          if (index > -1) {
-            onChange(values[index]);
-          }
-        }
-        break;
       case "Enter": {
-        let descendent = activeDescendant;
+        const descendent = activeDescendant;
         collapse();
         if (expanded && descendent !== listboxId) {
-          onChange(values[keys.indexOf(descendent)]);
+          // apply multiple pending
+          onChange(optProps.find((opt) => opt.key === descendent)?.value);
         }
         break;
       }
@@ -182,6 +147,8 @@ function Combobox<T extends ValueType>(props: ComboboxProps<T>) {
         break;
     }
   };
+
+  console.log("render");
 
   return (
     <div
@@ -207,7 +174,8 @@ function Combobox<T extends ValueType>(props: ComboboxProps<T>) {
         onClick={
           disabled
             ? undefined
-            : () => (expanded ? collapse() : setExpanded(true))
+            : () =>
+                expanded ? collapse() : dispatch({ type: ACTION_TYPE_EXPAND })
         }
       >
         <div

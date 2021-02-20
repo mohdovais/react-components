@@ -5,7 +5,7 @@ import {
   search as $search,
   scroller as $scroller,
 } from "./Combobox.module.css";
-import { ComboboxContext, emptyFn } from "./context";
+import { ComboboxContext, emptyFn, scrollIntoView } from "./context";
 import { PickerProps } from "./types";
 
 function Picker(props: PickerProps) {
@@ -26,6 +26,12 @@ function Picker(props: PickerProps) {
       setTimeout(() => inputRef.current?.focus(), 100);
     }
   }, [expand]);
+
+  useEffect(() => {
+    if (activeId != null && activeId !== "" && activeId !== id) {
+      scrollIntoView(document.getElementById(activeId));
+    }
+  });
 
   return (
     <div role="listbox" id={id} className={$listbox} style={style}>

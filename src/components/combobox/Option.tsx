@@ -1,6 +1,6 @@
 import * as React from "react";
 import { memo, useEffect, useRef, useContext } from "./react";
-import { ComboboxContext } from "./context";
+import { ComboboxContext, scrollIntoView } from "./context";
 import { OptionProps } from "./types";
 import {
   option as $option,
@@ -18,12 +18,10 @@ function Option(props: OptionProps) {
   const active = activeId === $__ID;
 
   useEffect(() => {
-    let timeout: number;
-    if (selected || active) {
-      timeout = setTimeout(() => ref.current?.scrollIntoView(), 10);
+    if (selected) {
+      scrollIntoView(ref.current);
     }
-    return () => clearTimeout(timeout);
-  }, [selected, active]);
+  });
 
   return (
     <div

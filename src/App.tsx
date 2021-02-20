@@ -15,7 +15,10 @@ function App() {
   useEffect(() => {
     fetch("/data/countries.json")
       .then((response) => response.json())
-      .then(setCountries);
+      .then((countries) => {
+        setCountries(countries);
+        setVal(countries[100]);
+      });
   }, []);
 
   const options = useMemo(() => {
