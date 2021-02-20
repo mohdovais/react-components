@@ -30,19 +30,35 @@ export interface PickerProps {
   onSearch?: (searchText: string) => void;
 }
 
-export interface ComboboxProps<T> {
+interface ComboboxSingleProps<T> {
   children?:
     | React.ReactElement<OptionProps>
     | React.ReactElement<OptionProps>[]
     | React.ReactElement<OptgroupProps>
     | React.ReactElement<OptgroupProps>[];
   disabled?: boolean;
-  multiple?: boolean;
+  multiple: false | undefined;
   value?: T;
   onChange: (value: T) => void;
   display?: (value?: T) => React.ReactNode;
   onSearch?: (searchText: string) => void;
 }
+
+interface ComboboxMultipleProps<T> {
+  children?:
+    | React.ReactElement<OptionProps>
+    | React.ReactElement<OptionProps>[]
+    | React.ReactElement<OptgroupProps>
+    | React.ReactElement<OptgroupProps>[];
+  disabled?: boolean;
+  multiple: true;
+  value?: T[];
+  onChange: (value: T[]) => void;
+  display?: (value?: T[]) => React.ReactNode;
+  onSearch?: (searchText: string) => void;
+}
+
+export type ComboboxProps<T extends ValueType> = ComboboxSingleProps<T> | ComboboxMultipleProps<T>;
 
 export type ContextType = {
   value: ValueType;

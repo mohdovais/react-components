@@ -10,7 +10,7 @@ import {
 } from "./Combobox.module.css";
 
 function Option(props: OptionProps) {
-  // @ts-ignore
+  // @ts-ignore $__ID is injected prop
   const { children, disabled, value, $__ID } = props;
   const ref = useRef<HTMLDivElement>(null);
   const { onSelect, value: selection, activeId } = useContext(ComboboxContext);
@@ -18,7 +18,7 @@ function Option(props: OptionProps) {
   const active = activeId === $__ID;
 
   useEffect(() => {
-    var timeout: number;
+    let timeout: number;
     if (selected || active) {
       timeout = setTimeout(() => ref.current?.scrollIntoView(), 10);
     }

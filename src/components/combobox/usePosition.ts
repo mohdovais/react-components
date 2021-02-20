@@ -27,7 +27,7 @@ function getPosition(
   const bottomSpace = viewportHeight - bottom;
   const rightSpace = viewportWidth - left;
 
-  let style: React.CSSProperties = {
+  const style: React.CSSProperties = {
     position: "absolute",
     width: "max-content",
     minWidth: width,
@@ -55,7 +55,7 @@ function getPosition(
 export function usePickerPosition(
   ref: React.RefObject<HTMLElement>,
   expanded = false
-) {
+): React.CSSProperties {
   const [position, setPosition] = useState(displayNone);
 
   useEffect(() => {
@@ -82,7 +82,7 @@ export function usePickerPosition(
       removeEventListener(EVENT_RESIZE, doCalculate);
       removeEventListener(EVENT_SCROLL, doCalculate);
     };
-  }, [expanded]);
+  }, [ref, expanded]);
 
   return position;
 }
