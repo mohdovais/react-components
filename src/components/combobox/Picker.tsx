@@ -14,7 +14,7 @@ function Picker(props: PickerProps) {
     id,
     style,
     expand = true,
-    value,
+    values,
     onSelect,
     activeId,
     onSearch,
@@ -36,7 +36,7 @@ function Picker(props: PickerProps) {
   return (
     <div role="listbox" id={id} className={$listbox} style={style}>
       {expand ? (
-        <ComboboxContext.Provider value={{ value, onSelect, activeId }}>
+        <ComboboxContext.Provider value={{ values, onSelect, activeId }}>
           {onSearch !== emptyFn ? (
             <div className={$search}>
               <input

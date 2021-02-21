@@ -1,8 +1,8 @@
 import { randomId } from "./Combobox.utils";
 
-export const ACTION_TYPE_EXPAND = "expand";
-export const ACTION_TYPE_COLLAPSE = "collpase";
-export const ACTION_TYPE_DESCENDANT = "descendant";
+export const ACTION_TYPE_COLLAPSE = 0;
+export const ACTION_TYPE_EXPAND = 1;
+export const ACTION_TYPE_DESCENDANT = 2;
 
 export interface ComboboxState {
   listboxId: string;
@@ -23,6 +23,10 @@ type ActionDescendant = {
 
 type Action = ActionExpand | ActionCollapse | ActionDescendant;
 
+function assign<S, T>(S: S, T: T): S & T {
+  return Object.assign({}, S, T);
+}
+
 export const initialState: ComboboxState = {
   listboxId: "",
   expanded: false,
@@ -31,7 +35,7 @@ export const initialState: ComboboxState = {
 
 export function initState(state: ComboboxState): ComboboxState {
   const id = randomId();
-  return Object.assign({}, state, {
+  return assign(state, {
     listboxId: id,
     activeDescendent: id,
   });
@@ -40,16 +44,16 @@ export function initState(state: ComboboxState): ComboboxState {
 export function reducer(state: ComboboxState, action: Action): ComboboxState {
   switch (action.type) {
     case ACTION_TYPE_EXPAND:
-      return Object.assign({}, state, {
+      return assign(state, {
         expanded: true,
       });
     case ACTION_TYPE_COLLAPSE:
-      return Object.assign({}, state, {
+      return assign(state, {
         expanded: false,
         activeDescendant: state.listboxId,
       });
     case ACTION_TYPE_DESCENDANT:
-      return Object.assign({}, state, {
+      return assign(state, {
         activeDescendant: action.descendant,
         expanded: true,
       });

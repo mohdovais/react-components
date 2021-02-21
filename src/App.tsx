@@ -10,6 +10,7 @@ type Country = {
 function App() {
   const [countries, setCountries] = useState<Country[]>([]);
   const [val, setVal] = useState<Country>(countries[100]);
+  const [val2, setVal2] = useState<Country[]>([]);
   const [query, setQuery] = useState("");
 
   useEffect(() => {
@@ -34,7 +35,14 @@ function App() {
 
   return (
     <div style={{ padding: 50 }}>
-      <select value="IN">
+      <select>
+        {countries.map((country: Country) => (
+          <option key={country.code} value={country.code}>
+            {country.name}
+          </option>
+        ))}
+      </select>
+      <select multiple onChange={(event) => console.log(event.target.value)}>
         {countries.map((country: Country) => (
           <option key={country.code} value={country.code}>
             {country.name}
@@ -49,6 +57,24 @@ function App() {
         onChange={setVal}
         display={(country?: Country) => country?.name ?? "select"}
         onSearch={setQuery}
+      >
+        {options}
+      </Combobox>
+      <p></p>
+      <hr />
+      <p></p>
+      <Combobox<Country>
+        value={val2}
+        onChange={setVal2}
+        display={(countries: Country[]) =>
+          countries.length === 0
+            ? "select"
+            : countries.length === 1
+            ? countries[0].name
+            : countries.length + " selected"
+        }
+        onSearch={setQuery}
+        multiple
       >
         {options}
       </Combobox>

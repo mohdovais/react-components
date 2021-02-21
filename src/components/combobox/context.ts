@@ -18,6 +18,6 @@ export function scrollIntoView(el?: HTMLElement | null): void {
 
 
 export const ComboboxContext = React.createContext<ContextType>({
-  value: undefined,
+  values: [],
   onSelect: emptyFn,
 });

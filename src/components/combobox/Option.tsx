@@ -13,8 +13,8 @@ function Option(props: OptionProps) {
   // @ts-ignore $__ID is injected prop
   const { children, disabled, value, $__ID } = props;
   const ref = useRef<HTMLDivElement>(null);
-  const { onSelect, value: selection, activeId } = useContext(ComboboxContext);
-  const selected = selection === value;
+  const { onSelect, values, activeId } = useContext(ComboboxContext);
+  const selected = values.indexOf(value) !== -1;
   const active = activeId === $__ID;
 
   useEffect(() => {

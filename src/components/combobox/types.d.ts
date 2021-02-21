@@ -1,11 +1,4 @@
-export type ValueType =
-  | string
-  | number
-  | boolean
-  | Date
-  | object
-  | undefined
-  | null;
+export type ValueType = string | number | boolean | Date | object | null;
 
 export interface OptgroupProps {
   disabled?: boolean;
@@ -23,7 +16,7 @@ export interface PickerProps {
   id?: string;
   style?: React.CSSProperties;
   expand?: boolean;
-  value: any;
+  values: ValueType[];
   children: React.ReactNode;
   activeId?: string;
   onSelect: (value: any) => void;
@@ -46,14 +39,14 @@ interface ComboboxBaseProps {
   onSearch?: (searchText: string) => void;
 }
 
-interface ComboboxSingleProps<T> extends ComboboxBaseProps {
+export interface ComboboxSingleProps<T> extends ComboboxBaseProps {
   multiple?: false;
   value?: T;
-  onChange: (value: T) => void;
+  onChange: (value?: T) => void;
   display?: (value?: T) => React.ReactNode;
 }
 
-interface ComboboxMultipleProps<T> extends ComboboxBaseProps {
+export interface ComboboxMultipleProps<T> extends ComboboxBaseProps {
   multiple: true;
   value?: T[];
   onChange: (value: T[]) => void;
@@ -65,7 +58,7 @@ export type ComboboxProps<T extends ValueType> =
   | ComboboxMultipleProps<T>;
 
 export type ContextType = {
-  value: ValueType;
+  values: ValueType[];
   activeId?: string;
   onSelect: (value: ValueType) => void;
 };

@@ -2,14 +2,19 @@ import * as React from "react";
 import { memo, useCallback, useMemo, useRef } from "./react";
 import Picker from "./Picker";
 import { usePickerPosition } from "./usePosition";
-import { emptyFn } from "./context";
+import { emptyFn, ensureArray } from "./context";
 import { normalizeChildren, getActiveDescendant } from "./Combobox.utils";
 import {
   wrapper as $wrapper,
   combobox as $combobox,
   disabled as $disabled,
 } from "./Combobox.module.css";
-import { ComboboxProps, ValueType } from "./types";
+import {
+  ComboboxMultipleProps,
+  ComboboxProps,
+  ComboboxSingleProps,
+  ValueType,
+} from "./types";
 import {
   initialState,
   initState,
@@ -19,18 +24,18 @@ import {
   ACTION_TYPE_DESCENDANT,
 } from "./store";
 
-const defaultDisplayRenderer = (value: ValueType ) => JSON.stringify(value);
+const defaultDisplayRenderer = (value: any) => JSON.stringify(value);
 
 function Combobox<T extends ValueType>(props: ComboboxProps<T>) {
   const {
     children,
     disabled = false,
-    value,
     onChange = emptyFn,
     display = defaultDisplayRenderer,
     onSearch = emptyFn,
-    multiple = false,
+    multiple,
   } = props;
+  const values = ensureArray<T>(props.value);
   const ref = useRef<HTMLDivElement>(null);
   const [state, dispatch] = React.useReducer(reducer, initialState, initState);
   const { activeDescendant, expanded, listboxId } = state;
@@ -51,16 +56,30 @@ function Combobox<T extends ValueType>(props: ComboboxProps<T>) {
     [onSearch]
   );
 
-  const onSelect = useCallback(
-    (value) => {
-      collapse();
-      onChange(value);
+  const onPickerSelection = useCallback(
+    (selection?: T) => {
+      if (multiple) {
+        if (selection != null) {
+          const newValues = values.slice();
+          const position = values.indexOf(selection);
+          if (position === -1) {
+            newValues.push(selection);
+          } else {
+            newValues.splice(position, 1);
+          }
+          onChange(newValues);
+        }
+      } else {
+        collapse();
+        onChange(selection);
+      }
     },
-    [collapse, onChange]
+    [multiple, values, onChange, collapse]
   );
 
   const handleKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
     if (count === 0) return;
+    const value = values[0];
 
     switch (event.code) {
       case "ArrowDown":
@@ -113,7 +132,7 @@ function Combobox<T extends ValueType>(props: ComboboxProps<T>) {
             ? 0
             : optProps.findIndex((opt) => opt.value === value) + 1;
         if (index < count) {
-          onChange(optProps[index].value);
+          onPickerSelection(optProps[index].value);
         }
         break;
       }
@@ -127,7 +146,7 @@ function Combobox<T extends ValueType>(props: ComboboxProps<T>) {
             ? 0
             : optProps.findIndex((opt) => opt.value === value) - 1;
         if (index > -1) {
-          onChange(optProps[index].value);
+          onPickerSelection(optProps[index].value);
         }
         break;
       }
@@ -137,7 +156,9 @@ function Combobox<T extends ValueType>(props: ComboboxProps<T>) {
         collapse();
         if (expanded && descendent !== listboxId) {
           // apply multiple pending
-          onChange(optProps.find((opt) => opt.key === descendent)?.value);
+          onPickerSelection(
+            optProps.find((opt) => opt.key === descendent)?.value
+          );
         }
         break;
       }
@@ -185,14 +206,14 @@ function Combobox<T extends ValueType>(props: ComboboxProps<T>) {
           aria-multiline="false"
           aria-activedescendant={activeDescendant}
         >
-          {display(value)}
+          {display(multiple ? values : values[0])}
         </div>
       </div>
       <Picker
         id={listboxId}
         style={pickerStyle}
-        value={value}
-        onSelect={onSelect}
+        values={values}
+        onSelect={onPickerSelection}
         expand={expanded}
         activeId={activeDescendant}
         onSearch={onSearch}
