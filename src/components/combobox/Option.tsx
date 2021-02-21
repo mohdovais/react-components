@@ -14,7 +14,7 @@ function Option(props: OptionProps) {
   const { children, disabled, value, $__ID } = props;
   const ref = useRef<HTMLDivElement>(null);
   const { onSelect, values, activeId } = useContext(ComboboxContext);
-  const selected = values.indexOf(value) !== -1;
+  const selected = value != null && values.indexOf(value) !== -1;
   const active = activeId === $__ID;
 
   useEffect(() => {
@@ -35,7 +35,7 @@ function Option(props: OptionProps) {
         disabled ? $disabled + " disabled" : "",
         active ? $active : "",
       ].join(" ")}
-      onClick={disabled ? undefined : () => onSelect(value)}
+      onClick={disabled || value == null ? undefined : () => onSelect(value)}
       tabIndex={-1}
       ref={ref}
     >

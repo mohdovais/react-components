@@ -9,7 +9,7 @@ type Country = {
 
 function App() {
   const [countries, setCountries] = useState<Country[]>([]);
-  const [val, setVal] = useState<Country>(countries[100]);
+  const [val, setVal] = useState<Country | undefined>(countries[100]);
   const [val2, setVal2] = useState<Country[]>([]);
   const [query, setQuery] = useState("");
 

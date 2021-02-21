@@ -3,8 +3,14 @@ import { ContextType, ValueType } from "./types";
 
 export const emptyFn = (value?: ValueType) => {};
 
-export function ensureArray<T>(item?: T | T[]): T[] {
-  return item == null ? [] : Array.isArray(item) ? item : [item];
+export function ensureArray<T>(item?: T | T[], newInstance = false): T[] {
+  return item == null
+    ? []
+    : Array.isArray(item)
+    ? newInstance
+      ? item.slice()
+      : item
+    : [item];
 }
 
 export function scrollIntoView(el?: HTMLElement | null): void {
@@ -15,7 +21,6 @@ export function scrollIntoView(el?: HTMLElement | null): void {
       inline: "nearest",
     });
 }
-
 
 export const ComboboxContext = React.createContext<ContextType>({
   values: [],

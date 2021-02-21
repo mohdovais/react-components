@@ -39,18 +39,23 @@ interface ComboboxBaseProps {
   onSearch?: (searchText: string) => void;
 }
 
+export type SingleDisplayRenderer<T> = (value?: T) => React.ReactNode;
+export type MultipleDisplayRenderer<T> = (value: T[]) => React.ReactNode;
+export type SingleOnChange<T> = (value?: T) => void;
+export type MultipleOnChange<T> = (value: T[]) => void;
+
 export interface ComboboxSingleProps<T> extends ComboboxBaseProps {
   multiple?: false;
   value?: T;
-  onChange: (value?: T) => void;
-  display?: (value?: T) => React.ReactNode;
+  onChange: SingleOnChange<T>;
+  display?: SingleDisplayRenderer<T>;
 }
 
 export interface ComboboxMultipleProps<T> extends ComboboxBaseProps {
   multiple: true;
   value?: T[];
-  onChange: (value: T[]) => void;
-  display?: (value?: T[]) => React.ReactNode;
+  onChange: MultipleOnChange<T>;
+  display?: MultipleDisplayRenderer<T>;
 }
 
 export type ComboboxProps<T extends ValueType> =
