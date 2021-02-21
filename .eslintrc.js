@@ -20,7 +20,11 @@ module.exports = {
   },
   plugins: ["react", "@typescript-eslint"],
   rules: {
-    '@typescript-eslint/ban-ts-comment': 0
+    "@typescript-eslint/ban-ts-comment": 0,
+  },
+  settings: {
+    react: {
+      version: "detect",
+    },
   },
 };
-

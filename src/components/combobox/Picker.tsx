@@ -6,9 +6,9 @@ import {
   scroller as $scroller,
 } from "./Combobox.module.css";
 import { ComboboxContext, emptyFn, scrollIntoView } from "./context";
-import { PickerProps } from "./types";
+import { PickerProps, ContextValue } from "./types";
 
-function Picker(props: PickerProps) {
+function Picker<T>(props: PickerProps<T>) {
   const {
     children,
     id,
@@ -61,4 +61,4 @@ function Picker(props: PickerProps) {
   );
 }
 
-export default memo(Picker);
+export default memo(Picker) as typeof Picker;

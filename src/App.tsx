@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from "react";
-import { Combobox, Option, Optgroup } from "./components/combobox";
+import { Combobox, Option } from "./components/combobox";
 //import countries from "../data/countries.json";
 
 type Country = {
@@ -7,7 +7,7 @@ type Country = {
   code: string;
 };
 
-function App() {
+function App(): JSX.Element {
   const [countries, setCountries] = useState<Country[]>([]);
   const [val, setVal] = useState<Country | undefined>(countries[100]);
   const [val2, setVal2] = useState<Country[]>([]);

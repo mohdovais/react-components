@@ -1,7 +1,8 @@
 import * as React from "react";
-import { ContextType, ValueType } from "./types";
+import { ContextValue } from "./types";
 
-export const emptyFn = (value?: ValueType) => {};
+/* eslint-disable @typescript-eslint/no-empty-function */
+export const emptyFn = (): void => {};
 
 export function ensureArray<T>(item?: T | T[], newInstance = false): T[] {
   return item == null
@@ -22,7 +23,7 @@ export function scrollIntoView(el?: HTMLElement | null): void {
     });
 }
 
-export const ComboboxContext = React.createContext<ContextType>({
+export const ComboboxContext = React.createContext<ContextValue<any>>({
   values: [],
   onSelect: emptyFn,
 });

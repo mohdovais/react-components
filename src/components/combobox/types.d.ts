@@ -12,14 +12,14 @@ export interface OptionProps {
   value?: ValueType;
 }
 
-export interface PickerProps {
+export interface PickerProps<T> {
   id?: string;
   style?: React.CSSProperties;
   expand?: boolean;
-  values: ValueType[];
+  values: T[];
   children: React.ReactNode;
   activeId?: string;
-  onSelect: (value: any) => void;
+  onSelect: (value: T) => void;
   onSearch?: (searchText: string) => void;
 }
 
@@ -62,8 +62,10 @@ export type ComboboxProps<T extends ValueType> =
   | ComboboxSingleProps<T>
   | ComboboxMultipleProps<T>;
 
-export type ContextType = {
-  values: ValueType[];
+
+
+export interface ContextValue<T = unknown> {
+  values: T[];
   activeId?: string;
-  onSelect: (value: ValueType) => void;
-};
+  onSelect: (value: T) => void;
+}

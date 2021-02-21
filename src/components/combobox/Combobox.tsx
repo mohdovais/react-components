@@ -10,9 +10,7 @@ import {
   disabled as $disabled,
 } from "./Combobox.module.css";
 import {
-  ComboboxMultipleProps,
   ComboboxProps,
-  ComboboxSingleProps,
   MultipleDisplayRenderer,
   MultipleOnChange,
   SingleDisplayRenderer,
@@ -28,12 +26,8 @@ import {
   ACTION_TYPE_DESCENDANT,
 } from "./store";
 
-const defaultDisplayRenderer = (value: any) => JSON.stringify(value);
-
-function isMultiple<T>(
-  props: ComboboxSingleProps<T> | ComboboxMultipleProps<T>
-): props is ComboboxMultipleProps<T> {
-  return props.multiple === true;
+function defaultDisplayRenderer<T>(value?: T | T[]) {
+  return JSON.stringify(value);
 }
 
 function isMultipleChange<T>(
@@ -193,8 +187,6 @@ function Combobox<T extends ValueType>(props: ComboboxProps<T>) {
     }
   };
 
-  console.log("render");
-
   return (
     <div
       className={$wrapper}
@@ -235,7 +227,7 @@ function Combobox<T extends ValueType>(props: ComboboxProps<T>) {
             : display(values[0])}
         </div>
       </div>
-      <Picker
+      <Picker<T>
         id={listboxId}
         style={pickerStyle}
         values={values}
