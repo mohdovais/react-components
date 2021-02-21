@@ -3,7 +3,7 @@ import { memo } from "./react";
 import { useRandomId } from "./useRandomId";
 import { OptgroupProps } from "./types";
 
-function Optgroup(props: OptgroupProps) {
+function Optgroup<T>(props: OptgroupProps<T>) {
   const { children, label, disabled } = props;
   const labelId = useRandomId("label");
   return (

@@ -52,7 +52,7 @@ function App(): JSX.Element {
       <p></p>
       <hr />
       <p></p>
-      <Combobox<Country>
+      <Combobox
         value={val}
         onChange={setVal}
         display={(country?: Country) => country?.name ?? "select"}

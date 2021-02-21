@@ -4,9 +4,9 @@ import Option from "./Option";
 import Optgroup from "./Optgroup";
 import { OptgroupProps, OptionProps, OptProps } from "./types";
 
-type Child =
-  | React.ReactElement<OptionProps>
-  | React.ReactElement<OptgroupProps>;
+type Child<T> =
+  | React.ReactElement<OptionProps<T>>
+  | React.ReactElement<OptgroupProps<T>>;
 
 export function randomId(prefix = "id"): string {
   return (Math.random() + Math.random())
@@ -17,9 +17,9 @@ export function randomId(prefix = "id"): string {
 export function normalizeChildren<T>(
   children: React.ReactNode,
   __disabled = false,
-  __dzieci: Child[] = [],
+  __dzieci: Child<T>[] = [],
   __optProps: OptProps<T>[] = []
-): { dzieci: Child[]; optProps: OptProps<T>[] } {
+): { dzieci: Child<T>[]; optProps: OptProps<T>[] } {
   React.Children.forEach(children, (child) => {
     if (React.isValidElement(child)) {
       const props = child.props;

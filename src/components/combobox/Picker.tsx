@@ -6,7 +6,7 @@ import {
   scroller as $scroller,
 } from "./Combobox.module.css";
 import { ComboboxContext, emptyFn, scrollIntoView } from "./context";
-import { PickerProps, ContextValue } from "./types";
+import { PickerProps } from "./types";
 
 function Picker<T>(props: PickerProps<T>) {
   const {

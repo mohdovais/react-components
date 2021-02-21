@@ -9,7 +9,7 @@ import {
   active as $active,
 } from "./Combobox.module.css";
 
-function Option(props: OptionProps) {
+function Option<T>(props: OptionProps<T>) {
   // @ts-ignore $__ID is injected prop
   const { children, disabled, value, $__ID } = props;
   const ref = useRef<HTMLDivElement>(null);

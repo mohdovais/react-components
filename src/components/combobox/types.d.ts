@@ -1,15 +1,18 @@
-export type ValueType = string | number | boolean | Date | object | null;
+//export type ValueType = string | number | boolean | Date | object;
+//type Unpacked<T> = T extends Array<infer U> ? U : T;
 
-export interface OptgroupProps {
+export interface OptgroupProps<T> {
   disabled?: boolean;
   label: string;
-  children: React.ReactElement<OptionProps> | React.ReactElement<OptionProps>[];
+  children:
+    | React.ReactElement<OptionProps<T>>
+    | React.ReactElement<OptionProps<T>>[];
 }
 
-export interface OptionProps {
+export interface OptionProps<T> {
   disabled?: boolean;
   children: React.ReactNode;
-  value?: ValueType;
+  value?: T;
 }
 
 export interface PickerProps<T> {
@@ -29,12 +32,12 @@ export type OptProps<T> = {
   disabled?: boolean;
 };
 
-interface ComboboxBaseProps {
+interface ComboboxBaseProps<T> {
   children?:
-    | React.ReactElement<OptionProps>
-    | React.ReactElement<OptionProps>[]
-    | React.ReactElement<OptgroupProps>
-    | React.ReactElement<OptgroupProps>[];
+    | React.ReactElement<OptionProps<T>>
+    | React.ReactElement<OptionProps<T>>[]
+    | React.ReactElement<OptgroupProps<T>>
+    | React.ReactElement<OptgroupProps<T>>[];
   disabled?: boolean;
   onSearch?: (searchText: string) => void;
 }
@@ -44,25 +47,26 @@ export type MultipleDisplayRenderer<T> = (value: T[]) => React.ReactNode;
 export type SingleOnChange<T> = (value?: T) => void;
 export type MultipleOnChange<T> = (value: T[]) => void;
 
-export interface ComboboxSingleProps<T> extends ComboboxBaseProps {
-  multiple?: false;
+export const YES = true;
+export const NO = false;
+
+export interface ComboboxSingleProps<T> extends ComboboxBaseProps<T> {
+  multiple?: typeof NO;
   value?: T;
   onChange: SingleOnChange<T>;
   display?: SingleDisplayRenderer<T>;
 }
 
-export interface ComboboxMultipleProps<T> extends ComboboxBaseProps {
-  multiple: true;
-  value?: T[];
+export interface ComboboxMultipleProps<T> extends ComboboxBaseProps<T> {
+  multiple: typeof YES;
+  value: T[];
   onChange: MultipleOnChange<T>;
   display?: MultipleDisplayRenderer<T>;
 }
 
-export type ComboboxProps<T extends ValueType> =
+export type ComboboxProps<T> =
   | ComboboxSingleProps<T>
   | ComboboxMultipleProps<T>;
-
-
 
 export interface ContextValue<T = unknown> {
   values: T[];

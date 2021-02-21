@@ -15,7 +15,6 @@ import {
   MultipleOnChange,
   SingleDisplayRenderer,
   SingleOnChange,
-  ValueType,
 } from "./types";
 import {
   initialState,
@@ -44,7 +43,7 @@ function isMultipleDisplayRender<T>(
   return innit === true;
 }
 
-function Combobox<T extends ValueType>(props: ComboboxProps<T>) {
+export function Combobox<T>(props: ComboboxProps<T>): JSX.Element {
   const {
     children,
     disabled = false,
@@ -173,7 +172,6 @@ function Combobox<T extends ValueType>(props: ComboboxProps<T>) {
         const descendent = activeDescendant;
         collapse();
         if (expanded && descendent !== listboxId) {
-          // apply multiple pending
           onPickerSelection(
             optProps.find((opt) => opt.key === descendent)?.value
           );
