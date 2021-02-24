@@ -40,6 +40,8 @@ interface ComboboxBaseProps<T> {
     | React.ReactElement<OptgroupProps<T>>[];
   disabled?: boolean;
   onSearch?: (searchText: string) => void;
+  className?: string;
+  id?: string;
 }
 
 export type SingleDisplayRenderer<T> = (value?: T) => React.ReactNode;

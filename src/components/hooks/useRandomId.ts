@@ -1,4 +1,4 @@
-import { useState } from "./react";
+import { useState } from "../react";
 
 export function useRandomId(prefix = "id"): string {
   const id = useState(() =>

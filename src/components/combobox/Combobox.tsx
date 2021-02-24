@@ -1,7 +1,7 @@
 import * as React from "react";
-import { memo, useCallback, useMemo, useRef } from "./react";
+import { memo, useCallback, useMemo, useRef } from "../react";
 import Picker from "./Picker";
-import { usePickerPosition } from "./usePosition";
+import { usePickerPosition } from "../hooks/usePosition";
 import { emptyFn, ensureArray } from "./context";
 import { normalizeChildren, getActiveDescendant } from "./Combobox.utils";
 import {
@@ -45,6 +45,8 @@ function isMultipleDisplayRender<T>(
 
 export function Combobox<T>(props: ComboboxProps<T>): JSX.Element {
   const {
+    id,
+    className = "",
     children,
     disabled = false,
     onSearch = emptyFn,
@@ -204,7 +206,8 @@ export function Combobox<T>(props: ComboboxProps<T>): JSX.Element {
         aria-owns={listboxId}
         aria-haspopup="listbox"
         ref={ref}
-        className={$combobox + " " + (disabled ? $disabled : "")}
+        id={id}
+        className={[$combobox, disabled ? $disabled : "", className].join(" ")}
         tabIndex={disabled ? undefined : 0}
         onClick={
           disabled

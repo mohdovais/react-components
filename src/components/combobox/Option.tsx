@@ -1,5 +1,5 @@
 import * as React from "react";
-import { memo, useEffect, useRef, useContext } from "./react";
+import { memo, useEffect, useRef, useContext } from "../react";
 import { ComboboxContext, scrollIntoView } from "./context";
 import { OptionProps } from "./types";
 import {

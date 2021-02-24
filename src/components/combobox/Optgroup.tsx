@@ -1,6 +1,6 @@
 import * as React from "react";
-import { memo } from "./react";
-import { useRandomId } from "./useRandomId";
+import { memo } from "../react";
+import { useRandomId } from "../hooks/useRandomId";
 import { OptgroupProps } from "./types";
 
 function Optgroup<T>(props: OptgroupProps<T>) {

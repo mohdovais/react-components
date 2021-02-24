@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { Combobox, Option } from "./components/combobox";
+import { parseDate } from "./utils/date-parse";
 //import countries from "../data/countries.json";
 
 type Country = {
@@ -35,23 +36,6 @@ function App(): JSX.Element {
 
   return (
     <div style={{ padding: 50 }}>
-      <select>
-        {countries.map((country: Country) => (
-          <option key={country.code} value={country.code}>
-            {country.name}
-          </option>
-        ))}
-      </select>
-      <select multiple onChange={(event) => console.log(event.target.value)}>
-        {countries.map((country: Country) => (
-          <option key={country.code} value={country.code}>
-            {country.name}
-          </option>
-        ))}
-      </select>
-      <p></p>
-      <hr />
-      <p></p>
       <Combobox
         value={val}
         onChange={setVal}
@@ -60,9 +44,7 @@ function App(): JSX.Element {
       >
         {options}
       </Combobox>
-      <p></p>
-      <hr />
-      <p></p>
+
       <Combobox<Country>
         value={val2}
         onChange={setVal2}
@@ -78,6 +60,19 @@ function App(): JSX.Element {
       >
         {options}
       </Combobox>
+      <div>
+        <hr />
+      </div>
+      <input
+        type="text"
+        onBlur={(event) => {
+          const p = performance.now();
+          const el = event.target;
+          const val = parseDate(el.value);
+          console.log(val, performance.now() - p);
+          el.value = val;
+        }}
+      />
     </div>
   );
 }

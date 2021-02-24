@@ -1,5 +1,5 @@
 import * as React from "react";
-import { memo, useRef, useEffect } from "./react";
+import { memo, useRef, useEffect } from "../react";
 import {
   listbox as $listbox,
   search as $search,
