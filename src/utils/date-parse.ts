@@ -57,12 +57,26 @@ export const parseDate = (date: string): string => {
     const twoDigit = n => n < 10 ? '0'+n : n.toString();
     const x = (month) => {
       const fmt = new Intl.DateTimeFormat("en", { month });
-      new Array(12)
-        .join(",")
-        .split(",")
+      new Array(0,0,0,0,0,0,0,0,0,0,0,0)
         .forEach((a, i) => {
           res[fmt.format(new Date(1970, i, 1)).toLowerCase()] = twoDigit(i+1);
         });
+    };
+    x("short");
+    x("long");
+    return JSON.stringify(res);
+  })();
+  */
+
+  /*
+(function () {
+    const res = {};
+    const twoDigit = n => n < 10 ? '0'+n : n.toString();
+    const x = (month) => {
+      const fmt = new Intl.DateTimeFormat("en", { month: 'short });
+      new Array(0,0,0,0,0,0,0,0,0,0,0,0)
+        .map((a, i) => fmt.format(new Date(1970, i, 1)))
+        .join(',);
     };
     x("short");
     x("long");
