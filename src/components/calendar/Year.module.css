@@ -1,0 +1,38 @@
+.tr {
+  display: flex;
+}
+
+.th,
+.td {
+  text-align: center;
+  height: 35px;
+  line-height: 30px;
+  box-sizing: border-box;
+  flex: 1;
+}
+
+.th {
+  font-size: 0.8em;
+  color: #666;
+}
+
+.td + .td {
+  border-left: 1px solid #ccc;
+}
+
+.td.weekend {
+  background-color: #eee;
+  color: #444;
+}
+
+.td:not(.disabled):not(:empty) {
+  cursor: pointer;
+}
+
+.td:not(.disabled):not(:empty):hover {
+  background-color: #ddd;
+}
+
+.tr + .tr {
+  border-top: 1px solid #ccc;
+}

@@ -1,5 +1,5 @@
 import React from "react";
-import { getDaysInMonth, weekdays_short, toISOString } from "./utils";
+import { emptyFn, getDaysInMonth, weekdays_short, toISOString } from "./utils";
 import style from "./Month.module.css";
 import { memo, useCallback } from "../react";
 
@@ -8,6 +8,8 @@ interface MonthProps {
   year: number;
   min?: string;
   max?: string;
+  today?: string;
+  selected?: string;
   onSelect?: (date: string) => void;
 }
 
@@ -23,13 +25,11 @@ const Header = memo(function Header() {
   );
 });
 
-const emptyFn = () => {};
-
 export default function Month(props: MonthProps): JSX.Element {
-  const { month, year, onSelect = emptyFn } = props;
-  const max = getDaysInMonth(month, year);
+  const { month, year, max, min, selected, today, onSelect = emptyFn } = props;
+  const daysInMonth = getDaysInMonth(month, year);
   const firstDay = new Date(year, month - 1, 1).getDay();
-  const weeks = Math.ceil((max + firstDay - 1) / 7);
+  const weeks = Math.ceil((daysInMonth + firstDay - 1) / 7);
   const rows = [];
   console.log(firstDay, weeks);
 
@@ -45,16 +45,21 @@ export default function Month(props: MonthProps): JSX.Element {
       <div key={"week" + i} className={style.tr}>
         {[1, 2, 3, 4, 5, 6, 7].map((d) => {
           const day = i * 7 + d - firstDay + 1;
-          const valid = day > 0 && day <= max;
+          const valid = day > 0 && day <= daysInMonth;
           const date = valid ? toISOString(year, month, day) : "";
+          const className = [
+            style.td,
+            d > 5 ? style.weekend : "",
+            today === date ? style.today : "",
+          ].join(" ");
           return (
             <div
               key={"day" + d}
-              className={style.td + " " + (d > 5 ? style.weekend : "")}
+              className={className}
               data-date={date}
               onClick={valid ? callback : undefined}
             >
-              {valid ? day : null}
+              <span>{valid ? day : null}</span>
             </div>
           );
         })}

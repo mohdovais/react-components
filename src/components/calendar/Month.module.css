@@ -1,5 +1,4 @@
 .month {
-    --display: inline-block;
     border: 1px solid #ccc;
     font-size: 15px;
 }
@@ -39,4 +38,12 @@
 
 .tr + .tr {
     border-top: 1px solid #ccc;
+}
+
+.td > span {
+    border-bottom: 2px solid transparent;
+}
+
+.td.today > span {
+    border-color: teal;
 }

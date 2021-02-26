@@ -17,3 +17,5 @@ const twoDigits = (num: number): string => (num > 9 ? "" : "0") + num;
 
 export const toISOString = (year: number, month: number, day: number): string =>
   year + "-" + twoDigits(month) + "-" + twoDigits(day);
+
+export const emptyFn = () => {};

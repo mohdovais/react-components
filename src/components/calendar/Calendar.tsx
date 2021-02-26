@@ -2,21 +2,25 @@ import React, { useState } from "react";
 import Month from "./Month";
 import { months_long } from "./utils";
 import style from "./Calendar.module.css";
+import { Year } from "./Year";
 
 interface CalendarProps {
   date?: string;
   onSelect?: (date: string) => void;
 }
 
+const lazy = () => {
+  const date = new Date();
+  const month = date.getMonth() + 1;
+  const year = date.getFullYear();
+  return { month, year };
+};
+
 export default function Calendar(props: CalendarProps): JSX.Element {
   const { onSelect } = props;
-  const [currentMonthYear, setCurrentMonthYear] = useState(() => {
-    const date = new Date();
-    const month = date.getMonth() + 1;
-    const year = date.getFullYear();
-    return { month, year };
-  });
+  const [currentMonthYear, setCurrentMonthYear] = useState(lazy);
   const { month, year } = currentMonthYear;
+  const today = new Date().toISOString().split("T")[0];
 
   const next = () =>
     setCurrentMonthYear(({ month, year }) => {
@@ -45,7 +49,8 @@ export default function Calendar(props: CalendarProps): JSX.Element {
           Next
         </button>
       </div>
-      <Month year={year} month={month} onSelect={onSelect} />
+      <Month year={year} month={month} today={today} onSelect={onSelect} />
+      <Year />
     </div>
   );
 }
