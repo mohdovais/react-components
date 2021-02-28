@@ -1,0 +1,35 @@
+.control {
+  display: inline-block;
+  padding: 2px;
+  border-radius: 3px;
+  background-color: #eee;
+  outline: none ;
+}
+
+.segment {
+  display: inline-block;
+  border: 2px solid transparent;
+  border-radius: 3px;
+  padding: 3px 20px;
+}
+
+.segment:not(.disabled) {
+  cursor: pointer;
+}
+
+.segment:focus {
+  outline: none;
+}
+
+:global(.focus-visible).control .segment.selected {
+  border-color: skyblue;
+}
+
+.control:focus-visible .segment.selected {
+  border-color: skyblue;
+}
+
+.segment.selected {
+  background-color: white;
+  box-shadow: 0 0 2px 0 rgba(0, 0, 0, 0.3);
+}

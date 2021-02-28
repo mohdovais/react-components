@@ -7,8 +7,8 @@ type Selection = { month: number; year: number };
 interface YearProps {
   year: number;
   selected?: string; // 2020-01 = Jan 2020
-  min?: string;
-  max?: string;
+  min?: string; // 2020-01 = Jan 2020
+  max?: string; // 2020-01 = Jan 2020
   onSelect?: (selection: Selection) => void;
 }
 
@@ -18,8 +18,7 @@ type Div = React.DetailedHTMLProps<
 >;
 
 export function Year(props: YearProps): JSX.Element {
-  const { month, year, max, min, onSelect = emptyFn } = props;
-  
+  const { year, selected, max = "", min = "", onSelect = emptyFn } = props;
 
   const rows = [];
   for (let i = 0; i < 3; i++) {

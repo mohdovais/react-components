@@ -10,6 +10,7 @@ interface CalendarProps {
 }
 
 const lazy = () => {
+  return { month: 1, year: 2023 };
   const date = new Date();
   const month = date.getMonth() + 1;
   const year = date.getFullYear();

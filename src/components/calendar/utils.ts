@@ -10,7 +10,7 @@ export const weekdays_long = split(
 );
 export const weekdays_short = split("Mon,Tue,Wed,Thu,Fri,Sat,Sun");
 
-export const getDaysInMonth = (month: number, year: number): number =>
+export const getDaysInMonth = (year: number, month: number): number =>
   new Date(year, month, 0).getDate();
 
 const twoDigits = (num: number): string => (num > 9 ? "" : "0") + num;

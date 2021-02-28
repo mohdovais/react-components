@@ -28,11 +28,11 @@
     color: #444;
 }
 
-.td:not(.disabled):not(:empty){
+.td:not(.disabled):not(:empty):not(.not_current){
     cursor: pointer;
 }
 
-.td:not(.disabled):not(:empty):hover{
+.td:not(.disabled):not(:empty):not(.not_current):hover{
     background-color: #ddd;
 }
 
@@ -41,9 +41,14 @@
 }
 
 .td > span {
-    border-bottom: 2px solid transparent;
+    border: 2px solid transparent;
 }
 
 .td.today > span {
-    border-color: teal;
+    border-bottom-color: teal;
+}
+
+.weekend.not_current,
+.not_current {
+    color: #aaa;
 }
