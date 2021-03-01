@@ -21,11 +21,11 @@
   outline: none;
 }
 
-:global(.focus-visible).control .segment.selected {
+:global(.focus-visible).control .segment.focussed {
   border-color: skyblue;
 }
 
-.control:focus-visible .segment.selected {
+.control:focus-visible .segment.focussed {
   border-color: skyblue;
 }
 
