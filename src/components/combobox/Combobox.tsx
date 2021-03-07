@@ -9,13 +9,7 @@ import {
   combobox as $combobox,
   disabled as $disabled,
 } from "./Combobox.module.css";
-import {
-  ComboboxProps,
-  MultipleDisplayRenderer,
-  MultipleOnChange,
-  SingleDisplayRenderer,
-  SingleOnChange,
-} from "./types";
+import { ComboboxProps } from "./types";
 import {
   initialState,
   initState,
@@ -29,20 +23,6 @@ function defaultDisplayRenderer<T>(value?: T | T[]) {
   return JSON.stringify(value);
 }
 
-function isMultipleChange<T>(
-  onChange: SingleOnChange<T> | MultipleOnChange<T>,
-  innit?: boolean
-): onChange is MultipleOnChange<T> {
-  return innit === true;
-}
-
-function isMultipleDisplayRender<T>(
-  renderer: SingleDisplayRenderer<T> | MultipleDisplayRenderer<T>,
-  innit?: boolean
-): renderer is MultipleDisplayRenderer<T> {
-  return innit === true;
-}
-
 export function Combobox<T>(props: ComboboxProps<T>): JSX.Element {
   const {
     id,
@@ -50,10 +30,9 @@ export function Combobox<T>(props: ComboboxProps<T>): JSX.Element {
     children,
     disabled = false,
     onSearch = emptyFn,
-    onChange = emptyFn,
     multiple,
-    display = defaultDisplayRenderer,
   } = props;
+
   const values = ensureArray<T>(props.value);
   const ref = useRef<HTMLDivElement>(null);
   const [state, dispatch] = React.useReducer(reducer, initialState, initState);
@@ -77,23 +56,23 @@ export function Combobox<T>(props: ComboboxProps<T>): JSX.Element {
 
   const onPickerSelection = useCallback(
     (selection?: T) => {
-      if (isMultipleChange(onChange, multiple)) {
-        if (selection != null) {
-          const newValues = ensureArray(values, true);
-          const position = newValues.indexOf(selection);
-          if (position === -1) {
-            newValues.push(selection);
-          } else {
-            newValues.splice(position, 1);
-          }
-          onChange(newValues);
+      if (selection == null) {
+        return;
+      } else if (props.multiple) {
+        const newValues = ensureArray(values, true);
+        const position = newValues.indexOf(selection);
+        if (position === -1) {
+          newValues.push(selection);
+        } else {
+          newValues.splice(position, 1);
         }
+        typeof props.onChange === "function" && props.onChange(newValues);
       } else {
         collapse();
-        onChange(selection);
+        typeof props.onChange === "function" && props.onChange(selection);
       }
     },
-    [values, multiple, collapse, onChange]
+    [values, collapse, props]
   );
 
   const handleKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
@@ -223,9 +202,11 @@ export function Combobox<T>(props: ComboboxProps<T>): JSX.Element {
           aria-multiline="false"
           aria-activedescendant={activeDescendant}
         >
-          {isMultipleDisplayRender(display, multiple)
-            ? display(values)
-            : display(values[0])}
+          {typeof props.displayRenderer === "function"
+            ? props.multiple === true
+              ? props.displayRenderer(values)
+              : props.displayRenderer(values[0])
+            : defaultDisplayRenderer(values)}
         </div>
       </div>
       <Picker<T>

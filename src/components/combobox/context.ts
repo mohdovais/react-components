@@ -4,7 +4,10 @@ import { ContextValue } from "./types";
 /* eslint-disable @typescript-eslint/no-empty-function */
 export const emptyFn = (): void => {};
 
-export function ensureArray<T>(item?: T | T[], newInstance = false): T[] {
+export function ensureArray<T>(
+  item?: null | T | T[],
+  newInstance = false
+): T[] {
   return item == null
     ? []
     : Array.isArray(item)

@@ -1,23 +1,40 @@
-import React from "react";
+import React, { useMemo, useState } from "react";
 import "focus-visible";
-import Calendar from "./components/calendar/Calendar";
-import {
-  Segment,
-  SegmentedControl,
-} from "./components/segmented-control/SegmentedControl";
-//import countries from "../data/countries.json";
+import countries from "../data/countries.json";
+import { Combobox, Option } from "./components/combobox";
+
+type Country = {
+  name: string;
+  code: string;
+};
 
 function App(): JSX.Element {
-  const [color, setColor] = React.useState("blue");
+  const [values, setValues] = useState<Country[]>([]);
+  const options = useMemo(
+    () =>
+      countries.map((country: Country) => (
+        <Option key={country.code} value={country}>
+          {country.name}
+        </Option>
+      )),
+    []
+  );
+
   return (
-    <div style={{ width: 1024, padding: "2em", margin: "0 auto" }}>
-      <SegmentedControl value={color} onChange={setColor}>
-        <Segment value="red">Red</Segment>
-        <Segment value="blue">Blue</Segment>
-        <Segment value="green">Green</Segment>
-      </SegmentedControl>
-      <hr />
-      <Calendar onSelect={(date) => console.log(date)} />
+    <div style={{ padding: 20 }}>
+      <Combobox<Country>
+        value={values}
+        multiple
+        onChange={setValues}
+        displayRenderer={(records: Country[]) =>
+          records.length > 2
+            ? records.length + " selected"
+            : records.map((record) => record.name).join(", ")
+        }
+        onSearch={(query: string) => console.log(query)}
+      >
+        {options}
+      </Combobox>
     </div>
   );
 }

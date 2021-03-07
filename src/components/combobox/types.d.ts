@@ -32,43 +32,39 @@ export type OptProps<T> = {
   disabled?: boolean;
 };
 
-interface ComboboxBaseProps<T> {
-  children?:
-    | React.ReactElement<OptionProps<T>>
-    | React.ReactElement<OptionProps<T>>[]
-    | React.ReactElement<OptgroupProps<T>>
-    | React.ReactElement<OptgroupProps<T>>[];
-  disabled?: boolean;
-  onSearch?: (searchText: string) => void;
-  className?: string;
-  id?: string;
-}
+type Unpacked<T> = T extends (infer U)[] ? U : never;
+type NeverUnpacked<T> = T extends any[] ? never : T;
 
-export type SingleDisplayRenderer<T> = (value?: T) => React.ReactNode;
-export type MultipleDisplayRenderer<T> = (value: T[]) => React.ReactNode;
-export type SingleOnChange<T> = (value?: T) => void;
-export type MultipleOnChange<T> = (value: T[]) => void;
+type children<T> =
+  | React.ReactElement<OptionProps<T>>
+  | React.ReactElement<OptionProps<T>>[]
+  | React.ReactElement<OptgroupProps<T>>
+  | React.ReactElement<OptgroupProps<T>>[];
 
-export const YES = true;
-export const NO = false;
-
-export interface ComboboxSingleProps<T> extends ComboboxBaseProps<T> {
-  multiple?: typeof NO;
-  value?: T;
-  onChange: SingleOnChange<T>;
-  display?: SingleDisplayRenderer<T>;
-}
-
-export interface ComboboxMultipleProps<T> extends ComboboxBaseProps<T> {
-  multiple: typeof YES;
-  value: T[];
-  onChange: MultipleOnChange<T>;
-  display?: MultipleDisplayRenderer<T>;
-}
 
 export type ComboboxProps<T> =
-  | ComboboxSingleProps<T>
-  | ComboboxMultipleProps<T>;
+  | {
+      id?: string;
+      className?: string;
+      disabled?: boolean;
+      value?: T;
+      onSearch?: (searchText: string) => void;
+      onChange?: (value: T) => void;
+      displayRenderer?: (value: T) => React.ReactNode;
+      multiple?: false;
+      children?: children<T>;
+    }
+  | {
+      id?: string;
+      className?: string;
+      disabled?: boolean;
+      value?: T[];
+      onSearch?: (searchText: string) => void;
+      onChange?: (value: T[]) => void;
+      displayRenderer?: (value: T[]) => React.ReactNode;
+      multiple: true;
+      children?: children<T>;
+    };
 
 export interface ContextValue<T = unknown> {
   values: T[];

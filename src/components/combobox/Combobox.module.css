@@ -14,7 +14,7 @@
   padding: 0.5em 1em 0.5em 0.5em;
 }
 
-.combobox:focus {
+.combobox:focus-visible {
   outline: 3px solid blue;
 }
 
