@@ -1,5 +1,6 @@
 export const wrapper: string;
 export const combobox: string;
+export const textbox: string;
 export const listbox: string;
 export const option: string;
 export const search: string;
@@ -7,3 +8,5 @@ export const scroller: string;
 export const disabled: string;
 export const selected: string;
 export const active: string;
+export const focus_within: string;
+export const trigger:string;

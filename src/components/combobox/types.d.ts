@@ -41,17 +41,19 @@ type children<T> =
   | React.ReactElement<OptgroupProps<T>>
   | React.ReactElement<OptgroupProps<T>>[];
 
-
 export type ComboboxProps<T> =
   | {
       id?: string;
       className?: string;
       disabled?: boolean;
       value?: T;
+      multiple?: false;
+      remote?: false;
+      displayRenderer?: (value: T) => React.ReactNode;
       onSearch?: (searchText: string) => void;
       onChange?: (value: T) => void;
-      displayRenderer?: (value: T) => React.ReactNode;
-      multiple?: false;
+      onClear?: never;
+      
       children?: children<T>;
     }
   | {
@@ -59,11 +61,26 @@ export type ComboboxProps<T> =
       className?: string;
       disabled?: boolean;
       value?: T[];
+      multiple: true;
+      remote?: false;
+      children?: children<T>;
+      displayRenderer?: (value: T[]) => React.ReactNode;
       onSearch?: (searchText: string) => void;
       onChange?: (value: T[]) => void;
-      displayRenderer?: (value: T[]) => React.ReactNode;
-      multiple: true;
+      onClear?: never;
+    }
+  | {
+      id?: string;
+      className?: string;
+      disabled?: boolean;
+      value?: T;
+      multiple?: false;
+      remote: true;
       children?: children<T>;
+      displayRenderer?: (value: T) => React.ReactNode;
+      onSearch: (searchText: string) => void;
+      onChange: (value: T) => void;
+      onClear: () => void;
     };
 
 export interface ContextValue<T = unknown> {

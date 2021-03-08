@@ -11,29 +11,45 @@
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
-  padding: 0.5em 1em 0.5em 0.5em;
+  background-color: aqua;
 }
 
-.combobox:focus-visible {
-  outline: 3px solid blue;
-}
-
-.combobox::after {
-  content: "\25BC";
-  position: absolute;
-
-  width: 1rem;
-  text-align: center;
-  font-size: 0.8rem;
-  top: 1px;
-  right: 1px;
-  bottom: 1px;
-  overflow: hidden;
-  background-color: #fff;
+.combobox.focus_within {
+  outline: 2px solid blue;
 }
 
 .combobox.disabled {
   opacity: 0.5;
+}
+
+.textbox {
+  flex: 1;
+  outline: none;
+  background-color: cadetblue;
+  min-height: 1em;
+}
+
+.textbox.remote {
+  background-image: url("data:image/svg+xml,%3Csvg focusable='false' xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' width='16' height='16' %3E%3Cpath d='M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z'%3E%3C/path%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position-x: 8px;
+  background-position-y: center;
+  padding: 8px 0 8px 28px;
+}
+
+.textbox.local {
+  background-image: url("data:image/svg+xml,%3Csvg focusable='false' xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' width='16' height='16' %3E%3Cpath d='M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z'%3E%3C/path%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position-x: right 8px;
+  background-position-y: center;
+  padding: 8px;
+}
+
+.trigger {
+  appearance: none;
+  outline: none;
+  border: 0;
+  background: transparent;
 }
 
 .listbox {
@@ -45,16 +61,20 @@
   z-index: 100;
 }
 
-.search {
+.listbox:empty {
+  visibility: hidden;
+}
+
+.listbox .search {
   padding: 0.5em;
   border-bottom: 1px solid rgba(0, 0, 0, 0.15);
 }
 
-.search input {
+.listbox .search input {
   width: 100%;
 }
 
-.search input:focus {
+.listbox .search input:focus {
   outline: 2px solid blue;
 }
 
